@@ -37,7 +37,7 @@ keeps <- c("price","fueltype","wheelbase","enginetype","horsepower","citympg","h
 cars = f[keeps]
 
 str(cars)
-summary(f)
+summary(cars)
 
 cars<-cars %>% replace_with_na(replace = list( horsepower= "?")) 
 cars$horsepower<- as.numeric(as.character(cars$horsepower))
