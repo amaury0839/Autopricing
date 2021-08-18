@@ -1,0 +1,102 @@
+---
+title: "Proyecto Cars"
+author: "Kevin Rosario Amaury Angeles"
+date: "13/8/2021"
+output: html_document
+---
+
+
+```{r  warning=FALSE, echo=FALSE,  results = FALSE,message=FALSE}
+library(naniar)
+library(ggplot2)
+library(GGally)
+library(corrplot)
+library(dplyr)
+library(psych)
+library(GGally)
+library(normtest)
+library(nortest)
+library(moments)
+library(textshape)
+library(ggplot2)
+
+
+```
+
+
+## El archivo que se encuentra en la dirección URL: 
+#### https://www.kaggle.com/hellbuoy/car-price-prediction/version/1
+
+## El  objetivo es predecir la variable price como variable respuesta  utilizando datos de las caracteristicas de los carros mediante Regresión Lineal (LR) para hacer la predicción. 
+
+
+```{r }
+f <- read.csv("CarPrice_Assignment.csv")
+
+keeps <- c("price","fueltype","wheelbase","enginetype","horsepower","citympg","highwaympg","peakrpm","cylindernumber")
+cars = f[keeps]
+
+str(cars)
+summary(f)
+
+cars<-cars %>% replace_with_na(replace = list( horsepower= "?")) 
+cars$horsepower<- as.numeric(as.character(cars$horsepower))
+str(cars)
+
+any(sapply(cars, is.na))
+any(sapply(cars, is.nan))
+any(sapply(cars, is.infinite))
+```
+
+### Estadisticas descriptivas.
+
+```{r }
+round(cor(subset(cars, select = c("price","wheelbase","horsepower","citympg","highwaympg","peakrpm")), method = "pearson"), digits = 3)
+
+corrplot(round(cor(subset(cars, select = c("price","wheelbase","horsepower","citympg","highwaympg","peakrpm"))), digits = 3), type = "lower")
+
+plot(cars$citympg,cars$price , main="Mileage vs. Car Weight",
+     xlab="Citympg", ylab="Price",
+     pch=18, col="blue")
+
+text(cars$citympg,cars$price , f$CarName,
+     cex=0.6, pos=4, col="red")
+
+
+hist(cars$price, col = "green",breaks = 20)
+
+cars$priceln<-log10(cars$price)
+
+hist(cars$priceln, col = "green",breaks = 20)
+
+hist(cars$horsepower, col = "green",breaks = 20)
+
+cars$horsepowerln<-log10(cars$horsepower)
+
+hist(cars$horsepowerln, col = "green",breaks = 20)
+
+hist(cars$wheelbase, col = "green",breaks = 20)
+
+hist(cars$citympg, col = "green",breaks = 20)
+
+hist(cars$highwaympg, col = "green",breaks = 20)
+
+hist(cars$peakrpm, col = "green",breaks = 20)
+
+ggpairs(select(cars, c("price","wheelbase","horsepower","citympg","highwaympg","peakrpm")), lower = list(continuous = "smooth"), 
+        diag = list(continuous = "bar"), axisLabels = "none")
+
+
+
+
+
+ggplot(aes(x = price, y = fueltype), data = cars) + stat_summary(fun.y = "mean", geom = "bar")
+
+ggplot(aes(x = price, y = enginetype), data = cars) + stat_summary(fun.y = "mean", geom = "bar")
+
+ggplot(aes(x = price, y = cylindernumber), data = cars) + stat_summary(fun.y = "mean", geom = "bar")
+
+
+
+
+```
